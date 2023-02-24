@@ -104,3 +104,25 @@ nav a {
     height: 20px;
     fill: #5f6368;
 }
+
+.search-box__search-field {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+}
+
+.search-box__search-field input {
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: #e8eaed;
+    word-wrap: break-word;
+    height: 34px;
+    font-size: 16px;
+    flex:100%;
+    background-color: transparent;
+}
+
+.search-box__search-field input:focus {
+    outline: none;
+}
