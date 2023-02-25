@@ -55,6 +55,19 @@ path {
 }
 
 .win-line__straight {
+    position: absolute;
     width: 400px;
     height: 400px;
+    top: 216px;
 }
+/*
+rotate: none;
+top: -56px;
+
+rotate:none;
+
+rotate:none;
+top: 216px;
+
+
+*/

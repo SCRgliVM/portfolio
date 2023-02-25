@@ -18,8 +18,8 @@ const Header = () => {
 
 const WinLine = () => {
   const StraightWinLine = (
-    <svg className="win-line win-line__straight" viewBox="0 0 128 128">
-      <path d="M0,64L128,64"></path>
+    <svg className="win-line win-line__straight" viewBox="0 0 384 128">
+      <path d="M0,64L384,64"></path>
     </svg>
   );
   const DiagonalWinLine = (
@@ -48,6 +48,8 @@ const GameBoard = () => {
         <GameField />
         <GameField />
         <GameField />
+        
+        <WinLine />
       </div>
     </>
   );
