@@ -12,11 +12,13 @@ const O = (
   </svg>
 );
 
-const GameState = () => {
+const GameState = ({ winner }) => {
+  let currentWinner = "";
+  if (winner === "x" || winner === "o")
+    currentWinner = <p>{winner.toUpperCase()} Win</p>;
   return (
     <div className="game-status">
-      <p>Current turn: some player</p>
-      <p>Some Player Win</p>
+      {currentWinner}
       <button>Restart game</button>
     </div>
   );
@@ -43,7 +45,10 @@ const WinLine = () => {
 
 const GameField = ({ changeState, fieldState }) => {
   return (
-    <div className="game-board__game-field" onClick={() => changeState("x")}>
+    <div
+      className="game-board__game-field"
+      onClick={() => !fieldState && changeState("x")}
+    >
       {fieldState === null ? "" : fieldState === "x" ? X : O}
     </div>
   );
@@ -78,12 +83,6 @@ const GameBoard = () => {
     let winner = null;
     winningVariants.forEach((variant) => {
       if (
-        !gameField[variant[0]] ||
-        !gameField[variant[1]] ||
-        !gameField[variant[2]]
-      )
-        return;
-      if (
         gameField[variant[0]] === "x" &&
         gameField[variant[0]] === gameField[variant[1]] &&
         gameField[variant[1]] === gameField[variant[2]]
@@ -102,11 +101,11 @@ const GameBoard = () => {
     });
     return winner;
   };
-  let calculatedWinner = checkWin()
+  let calculatedWinner = checkWin();
   if (calculatedWinner && !winner) setWinner(calculatedWinner);
 
-
   const getChangeStateForField = (fieldNumber) => {
+    if (calculatedWinner) return () => {};
     return (state) => {
       let newGameField = [...gameField];
       newGameField[fieldNumber] = state;
@@ -115,7 +114,7 @@ const GameBoard = () => {
     };
   };
 
-  if (currentTurn === "machine") {
+  if (!calculatedWinner && currentTurn === "machine") {
     let newGameField = [...gameField];
     newGameField[gameField.indexOf(null)] = "o";
     setGameField(newGameField);
@@ -162,7 +161,7 @@ const GameBoard = () => {
           fieldState={gameField[8]}
         />
       </div>
-      <GameState />
+      <GameState winner={calculatedWinner} />
     </>
   );
 };
