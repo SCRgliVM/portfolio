@@ -12,14 +12,26 @@ const O = (
   </svg>
 );
 
-const GameState = ({ winner }) => {
+const emptyGameField = [null, null, null, null, null, null, null, null, null];
+const winningVariants = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+const GameState = ({ winner, resetField }) => {
   let currentWinner = "";
   if (winner === "x" || winner === "o")
     currentWinner = <p>{winner.toUpperCase()} Win</p>;
   return (
     <div className="game-status">
       {currentWinner}
-      <button>Restart game</button>
+      <button onClick={resetField}>Restart game</button>
     </div>
   );
 };
@@ -55,63 +67,46 @@ const GameField = ({ changeState, fieldState }) => {
 };
 
 const GameBoard = () => {
-  const [gameField, setGameField] = React.useState([
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [gameField, setGameField] = React.useState(emptyGameField);
   const [currentTurn, setCurrentTurn] = React.useState("player");
   const [winner, setWinner] = React.useState(null);
 
   const checkWin = () => {
-    const winningVariants = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
     let winner = null;
     winningVariants.forEach((variant) => {
       if (
-        gameField[variant[0]] === "x" &&
+        (gameField[variant[0]] === "x" || gameField[variant[0]] === "o") &&
         gameField[variant[0]] === gameField[variant[1]] &&
         gameField[variant[1]] === gameField[variant[2]]
-      ) {
-        winner = "x";
-        return;
-      }
-      if (
-        gameField[variant[0]] === "o" &&
-        gameField[variant[0]] === gameField[variant[1]] &&
-        gameField[variant[1]] === gameField[variant[2]]
-      ) {
-        winner = "o";
-        return;
-      }
+      )
+        winner = gameField[variant[0]];
     });
     return winner;
   };
-  let calculatedWinner = checkWin();
-  if (calculatedWinner && !winner) setWinner(calculatedWinner);
+  
+  const calculateWinner= () => {
+    if (winner) return winner;
+    let calculatedWinner = checkWin();
+    if (calculatedWinner) setWinner(calculatedWinner);
+    return calculatedWinner;  
+  }
+
+  let calculatedWinner = calculateWinner();
 
   const getChangeStateForField = (fieldNumber) => {
     if (calculatedWinner) return () => {};
-    return (state) => {
+    return (sign) => {
       let newGameField = [...gameField];
-      newGameField[fieldNumber] = state;
+      newGameField[fieldNumber] = sign;
       setGameField(newGameField);
       setCurrentTurn("machine");
     };
+  };
+
+  const resetField = () => {
+    setGameField(emptyGameField);
+    setCurrentTurn("player");
+    setWinner(null);
   };
 
   if (!calculatedWinner && currentTurn === "machine") {
@@ -120,7 +115,7 @@ const GameBoard = () => {
     setGameField(newGameField);
     setCurrentTurn("player");
   }
-
+  
   return (
     <>
       <div className="game-board">
@@ -161,7 +156,7 @@ const GameBoard = () => {
           fieldState={gameField[8]}
         />
       </div>
-      <GameState winner={calculatedWinner} />
+      <GameState winner={calculatedWinner} resetField={resetField} />
     </>
   );
 };
